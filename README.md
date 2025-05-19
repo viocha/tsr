@@ -5,7 +5,7 @@ A simple TypeScript Node.js runner
 ## Installation
 
 ```bash
-npm install -g tsr
+npm install -g @viocha/tsr
 ```
 
 ## Usage

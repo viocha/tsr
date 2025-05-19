@@ -15,7 +15,7 @@ program
 		.description('Compile and optionally execute a TypeScript file');
 
 program
-		.command('run <entry>')
+		.command('run <entry>', {isDefault:true})
 		.description('Build and run the TypeScript file')
 		.action(async(entry)=>{
 			await buildAndRun(entry);
@@ -30,16 +30,6 @@ program
 		.action(async(entry, options)=>{
 			await buildOnly(entry, options);
 		});
-
-// 如果没有子命令，就自动插入 'run'
-const args = process.argv.slice(2); // 移除 node 和 当前脚本路径
-const allSubCommands = program.commands.map(cmd=>cmd.name());
-if (args.length>0 && !allSubCommands.includes(args[0])){ // 第一个参数不是子命令
-	process.argv.splice(2, 0, 'run');
-} else if (args.length===0){ // 没有参数
-	program.help(); // 自动显示帮助并退出
-	process.exit(1);
-}
 
 await program.parseAsync(process.argv);
 
@@ -87,7 +77,7 @@ async function rollupBuild(inputPath, outputFile, options){
 		treeshake:'smallest', // 最大程度去除未使用的代码
 		input:inputPath,
 		plugins:[
-			nodeResolve({modulePaths:process.env.NODE_PATH?.split(';') || []}),
+			nodeResolve({modulePaths:process.env.NODE_PATH?.split(';')}),
 			commonjs(),
 			typescript({
 				tsconfig:false,

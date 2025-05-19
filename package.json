@@ -1,6 +1,6 @@
 {
   "name": "@viocha/tsr",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "description": "A simple TypeScript Node.js runner",
   "files": [
