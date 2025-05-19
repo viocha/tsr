@@ -1,20 +1,27 @@
 {
   "name": "@viocha/tsr",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "A simple TypeScript Node.js runner",
+  "files": [
+    "index.js"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/viocha/tsr.git"
+    "url": "git+https://github.com/viocha/tsr.git"
   },
   "bin": {
-    "tsr": "./index.js"
+    "tsr": "index.js"
   },
   "scripts": {
     "test:run": "node index.js test/test.ts",
     "test:build": "node index.js build test/test.ts -o test/out/test.js"
   },
-  "keywords": ["typescript", "node", "runner"],
+  "keywords": [
+    "typescript",
+    "node",
+    "runner"
+  ],
   "author": "viocha",
   "license": "MIT",
   "dependencies": {
