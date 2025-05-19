@@ -24,9 +24,11 @@ program
 program
 		.command('build <entry>')
 		.description('Only build the TypeScript file, no execution')
+		// 指定外部依赖
+		.option('-e, --external <external>', 'External dependencies, separated by commas', (val)=>val.split(','))
 		.option('-o, --out <output>', 'Output file path')
 		.action(async(entry, options)=>{
-			await buildOnly(entry, options.out);
+			await buildOnly(entry, options);
 		});
 
 // 如果没有子命令，就自动插入 'run'
@@ -61,7 +63,8 @@ async function buildAndRun(entry){
 	}
 }
 
-async function buildOnly(entry, out){
+async function buildOnly(entry, options){
+	const {out, external} = options;
 	const inputPath = path.resolve(process.cwd(), entry);
 	
 	const inputDir = path.dirname(inputPath); // 获取输入文件的目录
@@ -70,7 +73,7 @@ async function buildOnly(entry, out){
 										 ? path.resolve(process.cwd(), out)
 										 : path.join(inputDir, `${inputBaseName}.out.js`); // 默认输出文件名为 inputFileName.out.js
 	try {
-		await rollupBuild(inputPath, outputFile);
+		await rollupBuild(inputPath, outputFile, {external});
 		console.log(`Build succeeded: ${outputFile}`);
 	} catch (err){
 		console.error('Build failed:', err);
@@ -79,7 +82,7 @@ async function buildOnly(entry, out){
 }
 
 // 构建并输出es格式的js文件到指定路径
-async function rollupBuild(inputPath, outputFile){
+async function rollupBuild(inputPath, outputFile, options){
 	const bundle = await rollup({
 		treeshake:'smallest', // 最大程度去除未使用的代码
 		input:inputPath,
@@ -99,6 +102,7 @@ async function rollupBuild(inputPath, outputFile){
 			}
 			warn(warning);
 		},
+		...options,
 	});
 	
 	await bundle.write({
