@@ -15,7 +15,10 @@
   },
   "scripts": {
     "test:run": "node index.js test/test.ts",
-    "test:build": "node index.js build test/test.ts -o test/out/test.js"
+    "test:run:installed": "tsr test/test.ts",
+    "test:build": "node index.js build test/test.ts -o test/out/test.js",
+    "pub": "npm publish --access public",
+    "pub:dry": "npm publish --dry-run --access public"
   },
   "keywords": [
     "typescript",
