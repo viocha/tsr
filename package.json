@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "type": "module",
   "description": "A simple TypeScript Node.js runner",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/viocha/tsr.git"
+  },
   "bin": {
     "tsr": "./index.js"
   },

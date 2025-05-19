@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/tsnode.iml" filepath="$PROJECT_DIR$/.idea/tsnode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/tsr.iml" filepath="$PROJECT_DIR$/.idea/tsr.iml" />
     </modules>
   </component>
 </project>
