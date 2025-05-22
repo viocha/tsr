@@ -5,11 +5,11 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "baseUrl": ".",
     "paths": {
       "*": [
         "D:/Programs/bin/node-util/*"
       ]
-    },
-    "types": ["node"]
+    }
   }
 }

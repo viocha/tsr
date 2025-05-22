@@ -79,11 +79,10 @@ async function rollupBuild(inputPath, outputFile, options){
 		treeshake:'smallest', // 最大程度去除未使用的代码
 		input:inputPath,
 		plugins:[
-			nodeResolve({modulePaths}),
-			commonjs(),
-			json(),
+			nodeResolve({modulePaths}), // 解析NODE_PATH中的模块
+			commonjs(), // 将CommonJS模块转换为ES模块
+			json(), // 支持导入json文件
 			typescript({
-				tsconfig:false,
 				target:'ESNext',
 				module:'ESNext',
 				moduleResolution:'node',
