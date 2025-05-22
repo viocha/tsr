@@ -1,6 +1,6 @@
 {
   "name": "@viocha/tsr",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "type": "module",
   "description": "A simple TypeScript Node.js runner",
   "files": [
@@ -16,6 +16,7 @@
   "scripts": {
     "test:run": "node index.js test/test.ts",
     "test:run:installed": "tsr test/test.ts",
+    "test:run:args": "node index.js test/args.ts 1 'a b'",
     "test:build": "node index.js build test/test.ts",
     "pub": "npm publish --access public",
     "pub:dry": "npm publish --dry-run --access public"

@@ -15,10 +15,10 @@ program
 		.description('Compile and optionally execute a TypeScript file');
 
 program
-		.command('run <entry>', {isDefault:true})
+		.command('run <entry> [args...]', {isDefault:true})
 		.description('Build and run the TypeScript file')
-		.action(async(entry)=>{
-			await buildAndRun(entry);
+		.action(async(entry, args)=>{
+			await buildAndRun(entry, args);
 		});
 
 program
@@ -33,7 +33,7 @@ program
 
 await program.parseAsync(process.argv);
 
-async function buildAndRun(entry){
+async function buildAndRun(entry, args){
 	const inputPath = path.resolve(process.cwd(), entry);
 	
 	const tmpFile = tmp.fileSync({postfix:'.js'});
@@ -41,7 +41,7 @@ async function buildAndRun(entry){
 	try {
 		await esbuildBuild(inputPath, outputFile);
 		
-		const child = spawn('node', [outputFile], {stdio:'inherit'}); // 继承父进程的io
+		const child = spawn('node', [outputFile, ...args], {stdio:'inherit'}); // 继承父进程的io
 		child.on('exit', (code)=>{
 			tmpFile.removeCallback();
 			process.exit(code);
