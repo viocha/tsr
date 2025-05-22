@@ -1,6 +1,6 @@
 {
   "name": "@viocha/tsr",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "type": "module",
   "description": "A simple TypeScript Node.js runner",
   "files": [
@@ -16,7 +16,7 @@
   "scripts": {
     "test:run": "node index.js test/test.ts",
     "test:run:installed": "tsr test/test.ts",
-    "test:build": "node index.js build test/test.ts -o test/out/test.js",
+    "test:build": "node index.js build test/test.ts",
     "pub": "npm publish --access public",
     "pub:dry": "npm publish --dry-run --access public"
   },
@@ -29,12 +29,17 @@
   "license": "MIT",
   "dependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.2",
     "commander": "^14.0.0",
+    "esbuild": "^0.25.4",
     "rollup": "^4.41.0",
     "tmp": "^0.2.3",
     "tslib": "^2.8.1",
     "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21"
   }
 }

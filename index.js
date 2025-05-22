@@ -1,14 +1,14 @@
-#!/usr/bin/env node
-
-import path from 'path';
-import {rollup} from 'rollup';
-import {program} from 'commander';
+import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
+import {nodeResolve} from '@rollup/plugin-node-resolve';
 
 import typescript from '@rollup/plugin-typescript';
-import {nodeResolve} from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import tmp from 'tmp';
 import {spawn} from 'child_process';
+import {program} from 'commander';
+import {build} from 'esbuild';
+import path from 'path';
+import {rollup} from 'rollup';
+import tmp from 'tmp';
 
 program
 		.name('tsr')
@@ -39,7 +39,7 @@ async function buildAndRun(entry){
 	const tmpFile = tmp.fileSync({postfix:'.js'});
 	const outputFile = tmpFile.name;
 	try {
-		await rollupBuild(inputPath, outputFile);
+		await esbuildBuild(inputPath, outputFile);
 		
 		const child = spawn('node', [outputFile], {stdio:'inherit'}); // 继承父进程的io
 		child.on('exit', (code)=>{
@@ -58,11 +58,12 @@ async function buildOnly(entry, options){
 	const inputPath = path.resolve(process.cwd(), entry);
 	
 	const inputDir = path.dirname(inputPath); // 获取输入文件的目录
-	const inputBaseName = path.basename(inputPath, path.extname(inputPath)); // 去掉后缀名
+	const inputBaseName = path.basename(inputPath, path.extname(inputPath)); // 获取输入文件的文件名（不带扩展名）
 	const outputFile = out
 										 ? path.resolve(process.cwd(), out)
-										 : path.join(inputDir, `${inputBaseName}.out.js`); // 默认输出文件名为 inputFileName.out.js
+										 : path.join(inputDir, `out/${inputBaseName}.js`); // 默认输出文件名为 inputFileName.out.js
 	try {
+		// esbuild 不支持commonjs的treeshake，故使用rollup
 		await rollupBuild(inputPath, outputFile, {external});
 		console.log(`Build succeeded: ${outputFile}`);
 	} catch (err){
@@ -73,12 +74,14 @@ async function buildOnly(entry, options){
 
 // 构建并输出es格式的js文件到指定路径
 async function rollupBuild(inputPath, outputFile, options){
+	const modulePaths = process.env.NODE_PATH?.split(';')?.filter(x=>x) || []; // 不能包含空字符串，若文件不在npm包中，会无法执行
 	const bundle = await rollup({
 		treeshake:'smallest', // 最大程度去除未使用的代码
 		input:inputPath,
 		plugins:[
-			nodeResolve({modulePaths:process.env.NODE_PATH?.split(';')}),
+			nodeResolve({modulePaths}),
 			commonjs(),
+			json(),
 			typescript({
 				tsconfig:false,
 				target:'ESNext',
@@ -94,9 +97,24 @@ async function rollupBuild(inputPath, outputFile, options){
 		},
 		...options,
 	});
-	
 	await bundle.write({
 		file:outputFile,
 		format:'es', // 使用ES模块格式
+	});
+}
+
+async function esbuildBuild(input, outfile, options){
+	const modulePaths = process.env.NODE_PATH?.split(path.delimiter).filter(Boolean) || [];
+	
+	await build({
+		entryPoints:[input],
+		outfile,
+		bundle:true,
+		platform:'node',
+		format:'esm',
+		target:'esnext',
+		charset:'utf8',
+		nodePaths:modulePaths, // 会自动添加 js/ts 后缀，以及识别目录的 index.js/index.ts 文件
+		...options,
 	});
 }
